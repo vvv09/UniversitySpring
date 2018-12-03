@@ -1,5 +1,5 @@
 <#import "parts/common.ftl" as c> 
 
 <@c.page>
-Добро пожаловать в наш Университет!
+<img src="images/main.png" class="img-fluid">
 </@c.page> 
