@@ -2,7 +2,7 @@
 
  <@c.page>
  
- <table>
+ <table class="table table-striped table-bordered table-hover">
     <#list groups as group>
         <tr>
             <td>${group.name}</td>
@@ -11,4 +11,7 @@
         </tr>
     </#list>
 </table>
+
+<a class="btn btn-primary mt-5" href="">Новая группа</a>
+
 </@c.page>
