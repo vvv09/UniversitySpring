@@ -6,12 +6,12 @@
     <#list groups as group>
         <tr>
             <td>${group.name}</td>
-            <td><a href="">Править</a></td>
-            <td><a href="">Удалить</a></td>
+            <td><a href="/groups/edit/${group.id}">Править</a></td>
+            <td><a href="/groups/delete/${group.id}">Удалить</a></td>
         </tr>
     </#list>
 </table>
 
-<a class="btn btn-primary mt-5" href="">Новая группа</a>
+<a class="btn btn-primary mt-5" href="/groups/new">Новая группа</a>
 
 </@c.page>

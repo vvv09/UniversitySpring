@@ -6,12 +6,12 @@
     <#list subjects as subject>
         <tr>
             <td>${subject.name}</td>
-            <td><a href="">Править</a></td>
-            <td><a href="">Удалить</a></td>
+            <td><a href="/subjects/edit/${subject.id}">Править</a></td>
+            <td><a href="/subjects/delete/${subject.id}">Удалить</a></td>
         </tr>
     </#list>
 </table>
 
-<a class="btn btn-primary mt-5" href="">Новый предмет</a>
+<a class="btn btn-primary mt-5" href="/subjects/new">Новый предмет</a>
 
 </@c.page>

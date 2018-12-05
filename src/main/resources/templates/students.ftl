@@ -6,12 +6,12 @@
     <#list students as student>
         <tr>
             <td>${student.lastName} ${student.firstName} ${student.middleName}</td>
-            <td><a href="">Править</a></td>
-            <td><a href="">Удалить</a></td>
+            <td><a href="/students/edit/${student.id}">Править</a></td>
+            <td><a href="/students/delete/${student.id}">Удалить</a></td>
         </tr>
     </#list>
 </table>
 
-<a class="btn btn-primary mt-5" href="">Новый студент</a>
+<a class="btn btn-primary mt-5" href="/students/new">Новый студент</a>
 
 </@c.page>
