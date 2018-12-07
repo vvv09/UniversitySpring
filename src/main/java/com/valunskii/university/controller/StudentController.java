@@ -49,12 +49,13 @@ public class StudentController {
     @GetMapping("/edit/{student}")
     public String retriveStudentForEdit(@PathVariable Student student, Model model) {
         model.addAttribute("student", student);
+        model.addAttribute("groups", groupRepo.findAll());
         return "editStudent";
     }
     
     @PostMapping("saveNew")
-    public String createStudent(@RequestParam String firstName, @RequestParam String middleName, @RequestParam String lastName, @RequestParam Long groupId, Model model) {
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + groupId);
+    public String createStudent(@RequestParam String firstName, @RequestParam String middleName,
+            @RequestParam String lastName, @RequestParam Long groupId, Model model) {
         Optional<Group> optionalGroup = groupRepo.findById(groupId);
         Group group = null;
         if (optionalGroup.isPresent()) {
@@ -65,11 +66,19 @@ public class StudentController {
     }
     
     @PostMapping
-    public String updateStudent(@RequestParam String firstName, @RequestParam String middleName, @RequestParam String lastName, @RequestParam("id") Student student) {
+    public String updateStudent(@RequestParam String firstName, @RequestParam String middleName,
+            @RequestParam String lastName, @RequestParam Long groupId, @RequestParam("id") Student student) {
         student.setLastName(lastName);
         student.setMiddleName(middleName);
         student.setFirstName(firstName);
+        Optional<Group> optionalGroup = groupRepo.findById(groupId);
+        Group group = null;
+        if (optionalGroup.isPresent()) {
+            group = optionalGroup.get();
+        }
+        student.setGroup(group);
         studentRepo.save(student);
+        
         return "redirect:/students";
     }
     
