@@ -32,11 +32,13 @@ public class Student {
           
     public Student() {
     }
-    
-    public Student(String firstName, String middleName, String lastName) {
+
+    public Student(String firstName, String middleName, String lastName, Group group) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
+        this.group = group;
     }
+    
 }
 

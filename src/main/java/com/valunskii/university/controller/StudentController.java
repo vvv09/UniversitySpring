@@ -1,5 +1,7 @@
 package com.valunskii.university.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,7 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.valunskii.university.domain.Group;
 import com.valunskii.university.domain.Student;
+import com.valunskii.university.repository.GroupRepository;
 import com.valunskii.university.repository.StudentRepository;
 
 @Controller
@@ -22,6 +26,13 @@ public class StudentController {
     public void setStudentRepo(StudentRepository studentRepo) {
         this.studentRepo = studentRepo;
     }
+    
+    private GroupRepository groupRepo;
+    
+    @Autowired
+    public void setGroupRepo(GroupRepository groupRepo) {
+        this.groupRepo = groupRepo;
+    }
 
     @GetMapping
     public String retriveAllStudents(Model model) {
@@ -31,6 +42,7 @@ public class StudentController {
     
     @GetMapping("/new")
     public String newStudentForm(Model model) {
+        model.addAttribute("groups", groupRepo.findAll());
         return "addStudent";
     }
     
@@ -41,8 +53,14 @@ public class StudentController {
     }
     
     @PostMapping("saveNew")
-    public String createStudent(@RequestParam String firstName, @RequestParam String middleName, @RequestParam String lastName, Model model) {
-        studentRepo.save(new Student(firstName, middleName, lastName));
+    public String createStudent(@RequestParam String firstName, @RequestParam String middleName, @RequestParam String lastName, @RequestParam Long groupId, Model model) {
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + groupId);
+        Optional<Group> optionalGroup = groupRepo.findById(groupId);
+        Group group = null;
+        if (optionalGroup.isPresent()) {
+            group = optionalGroup.get();
+        }
+        studentRepo.save(new Student(firstName, middleName, lastName, group));
         return "redirect:/students";
     }
     
