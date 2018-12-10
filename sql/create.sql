@@ -42,6 +42,7 @@ CREATE TYPE lesson AS ENUM ('FIRST', 'SECOND', 'THIRD', 'FOURTH', 'FIFTH', 'SIXT
 
 CREATE TABLE schedule
 (
+    id serial primary key,
     subject_id integer NOT NULL,
     group_id integer NOT NULL,
     teacher_id integer NOT NULL,
@@ -49,8 +50,6 @@ CREATE TABLE schedule
     day_of_week day_of_week NOT NULL,
     parity parity NOT NULL,
     lesson lesson NOT NULL,
-
-    PRIMARY KEY (subject_id, group_id, teacher_id, classroom_id, day_of_week, parity, lesson),
 
     FOREIGN KEY (subject_id) REFERENCES subjects (subject_id) ON DELETE RESTRICT,
     FOREIGN KEY (group_id) REFERENCES groups (group_id) ON DELETE RESTRICT,
