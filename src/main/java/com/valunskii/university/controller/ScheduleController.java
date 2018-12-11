@@ -64,6 +64,20 @@ public class ScheduleController {
         return "schedule";
     }
     
+    @GetMapping("/group/{group}")
+    public String retriveScheduleForGroup(@PathVariable Group group, Model model) {
+        model.addAttribute("schedule", scheduleRepo.findByGroupOrderById(group));
+       
+        return "schedule";
+    }
+    
+    @GetMapping("/teacher/{teacher}")
+    public String retriveScheduleForTeacher(@PathVariable Teacher teacher, Model model) {
+        model.addAttribute("schedule", scheduleRepo.findByTeacherOrderById(teacher));
+       
+        return "schedule";
+    }
+    
     @GetMapping("/edit/{schedule}")
     public String retriveScheduleForEdit(@PathVariable Schedule schedule, Model model) {
         model.addAttribute("sceduleRow", schedule);

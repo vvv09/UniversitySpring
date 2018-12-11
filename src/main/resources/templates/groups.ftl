@@ -6,6 +6,7 @@
     <#list groups as group>
         <tr>
             <td>${group.name}</td>
+            <td><a href="/schedule/group/${group.id}">Расписание</a></td>
             <td><a href="/groups/edit/${group.id}">Править</a></td>
             <td><a href="/groups/delete/${group.id}">Удалить</a></td>
         </tr>

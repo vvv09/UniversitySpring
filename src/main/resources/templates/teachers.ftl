@@ -6,6 +6,7 @@
     <#list teachers as teacher>
         <tr>
             <td>${teacher.lastName} ${teacher.firstName} ${teacher.middleName}</td>
+            <td><a href="/schedule/teacher/${teacher.id}">Расписание</a></td>
             <td><a href="/teachers/edit/${teacher.id}">Править</a></td>
             <td><a href="/teachers/delete/${teacher.id}">Удалить</a></td>
         </tr>
