@@ -26,7 +26,7 @@
             <td>${row.teacher.lastName}</td>
             <td>${row.group.name}</td>
             <td>${row.classroom.name}</td>
-            <td><a href="">Править</a></td>      
+            <td><a href="/schedule/edit/${row.id}">Править</a></td>      
         </tr>
     </#list>
     </tbody>   

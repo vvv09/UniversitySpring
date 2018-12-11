@@ -14,11 +14,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table(name="schedule")
+@TypeDef(
+        name = "pgsql_enum",
+        typeClass = PostgreSQLEnumType.class
+    )
 @Getter
 @Setter
 public class Schedule implements Serializable{
@@ -39,10 +46,16 @@ public class Schedule implements Serializable{
     @JoinColumn(name = "classroom_id")
     private Classroom classroom;
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "day_of_week")
+    @Type( type = "pgsql_enum" )
     private DayOfWeek dayOfWeek;
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "parity")
+    @Type( type = "pgsql_enum" )
     private Parity parity;
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "lesson")
+    @Type( type = "pgsql_enum" )
     private Lesson lesson;
     
     public Schedule() {
