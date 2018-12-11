@@ -5,7 +5,6 @@
 <table class="table table-striped table-bordered table-hover table-sm">
     <thead class="thead-inverse">
         <tr>
-            <th>#</th>
             <th>День недели</th>
             <th>Четность</th>
             <th>Лекция</th>
@@ -18,7 +17,6 @@
     <tbody>
     <#list schedule as row>
         <tr>        
-            <td>${row.id}</td>
             <td>${row.dayOfWeek}</td>
             <td>${row.parity}</td>
             <td>${row.lesson}</td>
