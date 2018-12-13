@@ -62,10 +62,13 @@
             <td>${row.teacher.lastName}</td>
             <td>${row.group.name}</td>
             <td>${row.classroom.name}</td>
-            <td><a href="/schedule/edit/${row.id}">Править</a></td>      
+            <td><a href="/schedule/edit/${row.id}">Править</a></td>
+            <td><a href="/schedule/delete/${row.id}">Удалить</a></td>   
         </tr>
     </#list>
     </tbody>   
 </table>
+
+<a class="btn btn-primary mt-5" href="/schedule/new">Новая запись</a>
 
 </@c.page>

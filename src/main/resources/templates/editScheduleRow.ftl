@@ -4,6 +4,41 @@
 Правка Расписания
 
 <form action="/schedule" method="post">
+<div class="form-group row">
+        <label class="col-sm-2 col-form-label">День недели :</label>
+        <div class="col-sm-6">
+            <select class="form-control" name="dayOfWeek">
+                <option <#if sceduleRow.parity == "MONDAY"> selected = "selected"</#if>>MONDAY</option>
+                <option <#if sceduleRow.parity == "TUESDAY"> selected = "selected"</#if>>TUESDAY</option>
+                <option <#if sceduleRow.parity == "WEDNESDAY"> selected = "selected"</#if>>WEDNESDAY</option>
+                <option <#if sceduleRow.parity == "THURSDAY"> selected = "selected"</#if>>THURSDAY</option>
+                <option <#if sceduleRow.parity == "FRIDAY"> selected = "selected"</#if>>FRIDAY</option>
+                <option <#if sceduleRow.parity == "SATURDAY"> selected = "selected"</#if>>SATURDAY</option>
+            </select>   
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Четность :</label>
+        <div class="col-sm-6">
+            <select class="form-control" name="parity">
+                <option <#if sceduleRow.parity == "ODD"> selected = "selected"</#if>>ODD</option>
+                <option <#if sceduleRow.parity == "EVEN"> selected = "selected"</#if>>EVEN</option>
+            </select>  
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Лекция № :</label>
+        <div class="col-sm-6">
+            <select class="form-control" name="lesson">
+                <option <#if sceduleRow.lesson == "FIRST"> selected = "selected"</#if>>FIRST</option>
+                <option <#if sceduleRow.lesson == "SECOND"> selected = "selected"</#if>>SECOND</option>
+                <option <#if sceduleRow.lesson == "THIRD"> selected = "selected"</#if>>THIRD</option>
+                <option <#if sceduleRow.lesson == "FOURTH"> selected = "selected"</#if>>FOURTH</option>
+                <option <#if sceduleRow.lesson == "FIFTH"> selected = "selected"</#if>>FIFTH</option>
+                <option <#if sceduleRow.lesson == "SIXTH"> selected = "selected"</#if>>SIXTH</option>
+            </select>
+        </div>
+    </div>
     
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Предмет :</label>

@@ -15,6 +15,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.valunskii.university.domain.Classroom;
 import com.valunskii.university.domain.Group;
+import com.valunskii.university.domain.Lesson;
 import com.valunskii.university.domain.Parity;
 import com.valunskii.university.domain.Schedule;
 import com.valunskii.university.domain.Subject;
@@ -108,10 +109,11 @@ public class ScheduleController {
                 model.addAttribute("schedule",
                         scheduleRepo.findByGroupAndDayOfWeekOrderById(group, DayOfWeek.valueOf(dayOfWeek)));
             } else if (dayOfWeek.equals(ANY)) {
-                model.addAttribute("schedule", scheduleRepo.findByGroupAndParityOrderById(group, Parity.valueOf(parity)));
+                model.addAttribute("schedule",
+                        scheduleRepo.findByGroupAndParityOrderById(group, Parity.valueOf(parity)));
             } else {
-                model.addAttribute("schedule", scheduleRepo
-                        .findByGroupAndDayOfWeekAndParityOrderById(group, DayOfWeek.valueOf(dayOfWeek), Parity.valueOf(parity)));
+                model.addAttribute("schedule", scheduleRepo.findByGroupAndDayOfWeekAndParityOrderById(group,
+                        DayOfWeek.valueOf(dayOfWeek), Parity.valueOf(parity)));
             }
         }
         model.addAttribute("group", group);
@@ -147,6 +149,15 @@ public class ScheduleController {
         return "schedule";
     }
 
+    @GetMapping("/new")
+    public String newScheduleRowForm(Model model) {
+        model.addAttribute("classrooms", classroomRepo.findAll());
+        model.addAttribute("teachers", teacherRepo.findAll());
+        model.addAttribute("subjects", subjectRepo.findAll());
+        model.addAttribute("groups", groupRepo.findAll());
+        return "addSchedule";
+    }
+
     @GetMapping("/edit/{schedule}")
     public String retriveScheduleForEdit(@PathVariable Schedule schedule, Model model) {
         model.addAttribute("sceduleRow", schedule);
@@ -160,13 +171,17 @@ public class ScheduleController {
     @PostMapping
     public String updateSchedule(WebRequest webRequest) {
         Map<String, String[]> params = webRequest.getParameterMap();
-        if(validate(params)) {        
+        if (validate(params)) {
             Optional<Schedule> optionalSchedule = scheduleRepo.findById(Long.parseLong(params.get("id")[0]));
             Schedule schedule = null;
             if (optionalSchedule.isPresent()) {
                 schedule = optionalSchedule.get();
             }
-            
+
+            schedule.setDayOfWeek(DayOfWeek.valueOf(params.get("dayOfWeek")[0]));
+            schedule.setParity(Parity.valueOf(params.get("parity")[0]));
+            schedule.setLesson(Lesson.valueOf(params.get("lesson")[0]));
+
             Optional<Subject> optionalSubject = subjectRepo.findById(Long.parseLong(params.get("subjectId")[0]));
             Subject subject = null;
             if (optionalSubject.isPresent()) {
@@ -200,21 +215,70 @@ public class ScheduleController {
         }
         return "redirect:/schedule";
     }
+
+    @PostMapping("saveNew")
+    public String createSchedule(WebRequest webRequest, Model model) {
+        Map<String, String[]> params = webRequest.getParameterMap();
+        if (validate(params)) {           
+            Optional<Subject> optionalSubject = subjectRepo.findById(Long.parseLong(params.get("subjectId")[0]));
+            Subject subject = null;
+            if (optionalSubject.isPresent()) {
+                subject = optionalSubject.get();
+            }
+           
+            Optional<Teacher> optionalTeacher = teacherRepo.findById(Long.parseLong(params.get("teacherId")[0]));
+            Teacher teacher = null;
+            if (optionalTeacher.isPresent()) {
+                teacher = optionalTeacher.get();
+            }
+           
+            Optional<Group> optionalGroup = groupRepo.findById(Long.parseLong(params.get("groupId")[0]));
+            Group group = null;
+            if (optionalGroup.isPresent()) {
+                group = optionalGroup.get();
+            }
+           
+            Optional<Classroom> optionalClassroom = classroomRepo
+                    .findById(Long.parseLong(params.get("classroomId")[0]));
+            Classroom classroom = null;
+            if (optionalClassroom.isPresent()) {
+                classroom = optionalClassroom.get();
+            }
+            
+            scheduleRepo.save(
+                    new Schedule(subject, group, teacher, classroom, DayOfWeek.valueOf(params.get("dayOfWeek")[0]),
+                            Parity.valueOf(params.get("parity")[0]), Lesson.valueOf(params.get("lesson")[0])));
+        }
+
+        return "redirect:/schedule";
+    }
     
+    @GetMapping("/delete/{schedule}")
+    public String deleteSchedule(@PathVariable Schedule schedule) {
+        scheduleRepo.delete(schedule);
+        return "redirect:/schedule";
+    }
+
     private boolean validate(Map<String, String[]> params) {
-        if(!params.containsKey("id") || params.get("id") == null) {
+        if (!params.containsKey("dayOfWeek") || params.get("dayOfWeek") == null) {
             return false;
         }
-        if(!params.containsKey("subjectId") || params.get("subjectId") == null) {
+        if (!params.containsKey("parity") || params.get("parity") == null) {
             return false;
         }
-        if(!params.containsKey("teacherId") || params.get("teacherId") == null) {
+        if (!params.containsKey("lesson") || params.get("lesson") == null) {
             return false;
         }
-        if(!params.containsKey("groupId") || params.get("groupId") == null) {
+        if (!params.containsKey("subjectId") || params.get("subjectId") == null) {
             return false;
         }
-        if(!params.containsKey("classroomId") || params.get("classroomId") == null) {
+        if (!params.containsKey("teacherId") || params.get("teacherId") == null) {
+            return false;
+        }
+        if (!params.containsKey("groupId") || params.get("groupId") == null) {
+            return false;
+        }
+        if (!params.containsKey("classroomId") || params.get("classroomId") == null) {
             return false;
         }
         return true;
