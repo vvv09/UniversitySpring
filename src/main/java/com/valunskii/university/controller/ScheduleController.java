@@ -1,6 +1,7 @@
 package com.valunskii.university.controller;
 
 import java.time.DayOfWeek;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
 
 import com.valunskii.university.domain.Classroom;
 import com.valunskii.university.domain.Group;
@@ -27,6 +28,8 @@ import com.valunskii.university.repository.TeacherRepository;
 @Controller
 @RequestMapping("/schedule")
 public class ScheduleController {
+
+    private final String ANY = "any";
 
     private ScheduleRepository scheduleRepo;
 
@@ -61,14 +64,23 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public String retriveAllSchedule(String dayOfWeek, String parity, Model model) {
-        if ((parity == null && dayOfWeek == null) || (parity.equals("ЛЮБАЯ") && dayOfWeek.equals("ЛЮБОЙ"))) {
+    public String retriveAllSchedule(WebRequest webRequest, Model model) {
+        Map<String, String[]> params = webRequest.getParameterMap();
+        String parity = null;
+        String dayOfWeek = null;
+        if (params.containsKey("parity")) {
+            parity = params.get("parity")[0];
+        }
+        if (params.containsKey("dayOfWeek")) {
+            dayOfWeek = params.get("dayOfWeek")[0];
+        }
+        if ((parity == null && dayOfWeek == null) || (parity.equals(ANY) && dayOfWeek.equals(ANY))) {
             model.addAttribute("schedule", scheduleRepo.findAllByOrderByIdAsc());
         } else {
-            if (parity.equals("ЛЮБАЯ")) {
+            if (parity.equals(ANY)) {
                 model.addAttribute("schedule",
                         scheduleRepo.findAllByDayOfWeekOrderByIdAsc(DayOfWeek.valueOf(dayOfWeek)));
-            } else if (dayOfWeek.equals("ЛЮБОЙ")) {
+            } else if (dayOfWeek.equals(ANY)) {
                 model.addAttribute("schedule", scheduleRepo.findAllByParityOrderByIdAsc(Parity.valueOf(parity)));
             } else {
                 model.addAttribute("schedule", scheduleRepo
@@ -79,14 +91,23 @@ public class ScheduleController {
     }
 
     @GetMapping("/group/{group}")
-    public String retriveScheduleForGroup(@PathVariable Group group, String dayOfWeek, String parity, Model model) {
-        if ((parity == null && dayOfWeek == null) || (parity.equals("ЛЮБАЯ") && dayOfWeek.equals("ЛЮБОЙ"))) {
+    public String retriveScheduleForGroup(@PathVariable Group group, WebRequest webRequest, Model model) {
+        Map<String, String[]> params = webRequest.getParameterMap();
+        String parity = null;
+        String dayOfWeek = null;
+        if (params.containsKey("parity")) {
+            parity = params.get("parity")[0];
+        }
+        if (params.containsKey("dayOfWeek")) {
+            dayOfWeek = params.get("dayOfWeek")[0];
+        }
+        if ((parity == null && dayOfWeek == null) || (parity.equals(ANY) && dayOfWeek.equals(ANY))) {
             model.addAttribute("schedule", scheduleRepo.findByGroupOrderById(group));
         } else {
-            if (parity.equals("ЛЮБАЯ")) {
+            if (parity.equals(ANY)) {
                 model.addAttribute("schedule",
                         scheduleRepo.findByGroupAndDayOfWeekOrderById(group, DayOfWeek.valueOf(dayOfWeek)));
-            } else if (dayOfWeek.equals("ЛЮБОЙ")) {
+            } else if (dayOfWeek.equals(ANY)) {
                 model.addAttribute("schedule", scheduleRepo.findByGroupAndParityOrderById(group, Parity.valueOf(parity)));
             } else {
                 model.addAttribute("schedule", scheduleRepo
@@ -98,19 +119,28 @@ public class ScheduleController {
     }
 
     @GetMapping("/teacher/{teacher}")
-    public String retriveScheduleForTeacher(@PathVariable Teacher teacher, String dayOfWeek, String parity,
-            Model model) {
-        if ((parity == null && dayOfWeek == null) || (parity.equals("ЛЮБАЯ") && dayOfWeek.equals("ЛЮБОЙ"))) {
+    public String retriveScheduleForTeacher(@PathVariable Teacher teacher, WebRequest webRequest, Model model) {
+        Map<String, String[]> params = webRequest.getParameterMap();
+        String parity = null;
+        String dayOfWeek = null;
+        if (params.containsKey("parity")) {
+            parity = params.get("parity")[0];
+        }
+        if (params.containsKey("dayOfWeek")) {
+            dayOfWeek = params.get("dayOfWeek")[0];
+        }
+        if ((parity == null && dayOfWeek == null) || (parity.equals(ANY) && dayOfWeek.equals(ANY))) {
             model.addAttribute("schedule", scheduleRepo.findByTeacherOrderById(teacher));
         } else {
-            if (parity.equals("ЛЮБАЯ")) {
+            if (parity.equals(ANY)) {
                 model.addAttribute("schedule",
                         scheduleRepo.findByTeacherAndDayOfWeekOrderById(teacher, DayOfWeek.valueOf(dayOfWeek)));
-            } else if (dayOfWeek.equals("ЛЮБОЙ")) {
-                model.addAttribute("schedule", scheduleRepo.findByTeacherAndParityOrderById(teacher, Parity.valueOf(parity)));
+            } else if (dayOfWeek.equals(ANY)) {
+                model.addAttribute("schedule",
+                        scheduleRepo.findByTeacherAndParityOrderById(teacher, Parity.valueOf(parity)));
             } else {
-                model.addAttribute("schedule", scheduleRepo
-                        .findByTeacherAndDayOfWeekAndParityOrderById(teacher, DayOfWeek.valueOf(dayOfWeek), Parity.valueOf(parity)));
+                model.addAttribute("schedule", scheduleRepo.findByTeacherAndDayOfWeekAndParityOrderById(teacher,
+                        DayOfWeek.valueOf(dayOfWeek), Parity.valueOf(parity)));
             }
         }
         model.addAttribute("teacher", teacher);
@@ -128,31 +158,35 @@ public class ScheduleController {
     }
 
     @PostMapping
-    public String updateSchedule(@RequestParam Long subjectId, @RequestParam Long teacherId, @RequestParam Long groupId,
-            @RequestParam Long classroomId, @RequestParam("id") Schedule schedule) {
-
-        Optional<Subject> optionalSubject = subjectRepo.findById(subjectId);
+    public String updateSchedule(WebRequest webRequest) {
+        Map<String, String[]> params = webRequest.getParameterMap();
+        Optional<Schedule> optionalSchedule = scheduleRepo.findById(Long.parseLong(params.get("id")[0]));
+        Schedule schedule = null;
+        if (optionalSchedule.isPresent()) {
+            schedule = optionalSchedule.get();
+        }
+        Optional<Subject> optionalSubject = subjectRepo.findById(Long.parseLong(params.get("subjectId")[0]));
         Subject subject = null;
         if (optionalSubject.isPresent()) {
             subject = optionalSubject.get();
         }
         schedule.setSubject(subject);
 
-        Optional<Teacher> optionalTeacher = teacherRepo.findById(teacherId);
+        Optional<Teacher> optionalTeacher = teacherRepo.findById(Long.parseLong(params.get("teacherId")[0]));
         Teacher teacher = null;
         if (optionalTeacher.isPresent()) {
             teacher = optionalTeacher.get();
         }
         schedule.setTeacher(teacher);
 
-        Optional<Group> optionalGroup = groupRepo.findById(groupId);
+        Optional<Group> optionalGroup = groupRepo.findById(Long.parseLong(params.get("groupId")[0]));
         Group group = null;
         if (optionalGroup.isPresent()) {
             group = optionalGroup.get();
         }
         schedule.setGroup(group);
 
-        Optional<Classroom> optionalClassroom = classroomRepo.findById(classroomId);
+        Optional<Classroom> optionalClassroom = classroomRepo.findById(Long.parseLong(params.get("classroomId")[0]));
         Classroom classroom = null;
         if (optionalClassroom.isPresent()) {
             classroom = optionalClassroom.get();

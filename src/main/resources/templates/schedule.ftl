@@ -11,7 +11,7 @@
             <label class="col-sm-2 col-form-label">День недели :</label>
             <div class="col-sm-6">
                 <select class="form-control" name="dayOfWeek">
-                    <option>ЛЮБОЙ</option>
+                    <option>any</option>
                     <option>MONDAY</option>
                     <option>TUESDAY</option>
                     <option>WEDNESDAY</option>
@@ -25,7 +25,7 @@
             <label class="col-sm-2 col-form-label">Четность недели :</label>
             <div class="col-sm-6">
                 <select class="form-control" name="parity">
-                    <option>ЛЮБАЯ</option>
+                    <option>any</option>
                     <option>ODD</option>
                     <option>EVEN</option>
                 </select>  

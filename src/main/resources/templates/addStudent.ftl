@@ -26,7 +26,6 @@
         <label class="col-sm-2 col-form-label">Группа :</label>     
         <div class="col-sm-6">
             <select class="form-control" name="groupId">
-            <option value="" disabled selected>Виберете группу</option>
                 <#list groups as group>
                     <option value="${group.id}">${group.name}</option>
                 </#list>

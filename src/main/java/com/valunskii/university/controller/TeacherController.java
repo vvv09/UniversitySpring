@@ -1,5 +1,8 @@
 package com.valunskii.university.controller;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
 
 import com.valunskii.university.domain.Teacher;
 import com.valunskii.university.repository.TeacherRepository;
@@ -41,16 +44,23 @@ public class TeacherController {
     }
     
     @PostMapping("saveNew")
-    public String createTeacher(@RequestParam String firstName, @RequestParam String middleName, @RequestParam String lastName, Model model) {
-        teacherRepo.save(new Teacher(firstName, middleName, lastName));
+    public String createTeacher(WebRequest webRequest, Model model) {
+        Map<String, String[]> params = webRequest.getParameterMap();
+        teacherRepo.save(new Teacher(params.get("firstName")[0], params.get("middleName")[0], params.get("lastName")[0]));
         return "redirect:/teachers";
     }
     
     @PostMapping
-    public String updateClassroom(@RequestParam String firstName, @RequestParam String middleName, @RequestParam String lastName, @RequestParam("id") Teacher teacher) {
-        teacher.setLastName(lastName);
-        teacher.setMiddleName(middleName);
-        teacher.setFirstName(firstName);
+    public String updateClassroom(WebRequest webRequest) {
+        Map<String, String[]> params = webRequest.getParameterMap();
+        Optional<Teacher> optionalTeacher = teacherRepo.findById(Long.parseLong(params.get("id")[0]));
+        Teacher teacher = null;
+        if (optionalTeacher.isPresent()) {
+            teacher = optionalTeacher.get();
+        }
+        teacher.setLastName(params.get("lastName")[0]);
+        teacher.setMiddleName(params.get("middleName")[0]);
+        teacher.setFirstName(params.get("firstName")[0]);
         teacherRepo.save(teacher);
         return "redirect:/teachers";
     }

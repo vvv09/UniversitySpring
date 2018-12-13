@@ -1,5 +1,6 @@
 package com.valunskii.university.controller;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
 
 import com.valunskii.university.domain.Group;
 import com.valunskii.university.domain.Student;
@@ -54,24 +55,29 @@ public class StudentController {
     }
     
     @PostMapping("saveNew")
-    public String createStudent(@RequestParam String firstName, @RequestParam String middleName,
-            @RequestParam String lastName, @RequestParam Long groupId, Model model) {
-        Optional<Group> optionalGroup = groupRepo.findById(groupId);
+    public String createStudent(WebRequest webRequest, Model model) {
+        Map<String, String[]> params = webRequest.getParameterMap();
+        Optional<Group> optionalGroup = groupRepo.findById(Long.parseLong(params.get("groupId")[0]));
         Group group = null;
         if (optionalGroup.isPresent()) {
             group = optionalGroup.get();
         }
-        studentRepo.save(new Student(firstName, middleName, lastName, group));
+        studentRepo.save(new Student(params.get("firstName")[0], params.get("middleName")[0], params.get("lastName")[0], group));
         return "redirect:/students";
     }
     
     @PostMapping
-    public String updateStudent(@RequestParam String firstName, @RequestParam String middleName,
-            @RequestParam String lastName, @RequestParam Long groupId, @RequestParam("id") Student student) {
-        student.setLastName(lastName);
-        student.setMiddleName(middleName);
-        student.setFirstName(firstName);
-        Optional<Group> optionalGroup = groupRepo.findById(groupId);
+    public String updateStudent(WebRequest webRequest) {
+        Map<String, String[]> params = webRequest.getParameterMap();
+        Optional<Student> optionalStudent = studentRepo.findById(Long.parseLong(params.get("id")[0]));
+        Student student = null;
+        if (optionalStudent.isPresent()) {
+            student = optionalStudent.get();
+        }
+        student.setLastName(params.get("lastName")[0]);
+        student.setMiddleName(params.get("middleName")[0]);
+        student.setFirstName(params.get("firstName")[0]);
+        Optional<Group> optionalGroup = groupRepo.findById(Long.parseLong(params.get("groupId")[0]));
         Group group = null;
         if (optionalGroup.isPresent()) {
             group = optionalGroup.get();
