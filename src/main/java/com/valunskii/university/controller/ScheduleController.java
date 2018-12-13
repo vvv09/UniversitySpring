@@ -160,41 +160,63 @@ public class ScheduleController {
     @PostMapping
     public String updateSchedule(WebRequest webRequest) {
         Map<String, String[]> params = webRequest.getParameterMap();
-        Optional<Schedule> optionalSchedule = scheduleRepo.findById(Long.parseLong(params.get("id")[0]));
-        Schedule schedule = null;
-        if (optionalSchedule.isPresent()) {
-            schedule = optionalSchedule.get();
-        }
-        Optional<Subject> optionalSubject = subjectRepo.findById(Long.parseLong(params.get("subjectId")[0]));
-        Subject subject = null;
-        if (optionalSubject.isPresent()) {
-            subject = optionalSubject.get();
-        }
-        schedule.setSubject(subject);
+        if(validate(params)) {        
+            Optional<Schedule> optionalSchedule = scheduleRepo.findById(Long.parseLong(params.get("id")[0]));
+            Schedule schedule = null;
+            if (optionalSchedule.isPresent()) {
+                schedule = optionalSchedule.get();
+            }
+            
+            Optional<Subject> optionalSubject = subjectRepo.findById(Long.parseLong(params.get("subjectId")[0]));
+            Subject subject = null;
+            if (optionalSubject.isPresent()) {
+                subject = optionalSubject.get();
+            }
+            schedule.setSubject(subject);
 
-        Optional<Teacher> optionalTeacher = teacherRepo.findById(Long.parseLong(params.get("teacherId")[0]));
-        Teacher teacher = null;
-        if (optionalTeacher.isPresent()) {
-            teacher = optionalTeacher.get();
+            Optional<Teacher> optionalTeacher = teacherRepo.findById(Long.parseLong(params.get("teacherId")[0]));
+            Teacher teacher = null;
+            if (optionalTeacher.isPresent()) {
+                teacher = optionalTeacher.get();
+            }
+            schedule.setTeacher(teacher);
+
+            Optional<Group> optionalGroup = groupRepo.findById(Long.parseLong(params.get("groupId")[0]));
+            Group group = null;
+            if (optionalGroup.isPresent()) {
+                group = optionalGroup.get();
+            }
+            schedule.setGroup(group);
+
+            Optional<Classroom> optionalClassroom = classroomRepo
+                    .findById(Long.parseLong(params.get("classroomId")[0]));
+            Classroom classroom = null;
+            if (optionalClassroom.isPresent()) {
+                classroom = optionalClassroom.get();
+            }
+            schedule.setClassroom(classroom);
+
+            scheduleRepo.save(schedule);
         }
-        schedule.setTeacher(teacher);
-
-        Optional<Group> optionalGroup = groupRepo.findById(Long.parseLong(params.get("groupId")[0]));
-        Group group = null;
-        if (optionalGroup.isPresent()) {
-            group = optionalGroup.get();
-        }
-        schedule.setGroup(group);
-
-        Optional<Classroom> optionalClassroom = classroomRepo.findById(Long.parseLong(params.get("classroomId")[0]));
-        Classroom classroom = null;
-        if (optionalClassroom.isPresent()) {
-            classroom = optionalClassroom.get();
-        }
-        schedule.setClassroom(classroom);
-
-        scheduleRepo.save(schedule);
-
         return "redirect:/schedule";
+    }
+    
+    private boolean validate(Map<String, String[]> params) {
+        if(!params.containsKey("id") || params.get("id") == null) {
+            return false;
+        }
+        if(!params.containsKey("subjectId") || params.get("subjectId") == null) {
+            return false;
+        }
+        if(!params.containsKey("teacherId") || params.get("teacherId") == null) {
+            return false;
+        }
+        if(!params.containsKey("groupId") || params.get("groupId") == null) {
+            return false;
+        }
+        if(!params.containsKey("classroomId") || params.get("classroomId") == null) {
+            return false;
+        }
+        return true;
     }
 }
